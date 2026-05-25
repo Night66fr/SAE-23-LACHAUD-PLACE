@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/config.php';
 $title = 'Catalogue des missions';
 include('login.php');
 

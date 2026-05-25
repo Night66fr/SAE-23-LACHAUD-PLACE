@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/config.php';
 // ============================================================
 //  LevelUp – soumettre.php
 //  Formulaire de soumission de preuve pour une mission
@@ -11,23 +12,7 @@ if ($_SESSION['role'] !== 'etudiant') {
     header('Location: index-prof.php'); exit();
 }
 
-$dbHost='localhost'; $dbName='db_PLACE_NEVEUX'; $dbUser='22505078'; $dbPasswd='126620';
-try {
-    $pdo = new PDO('mysql:host='.$dbHost.';dbname='.$dbName.';charset=utf8mb4',$dbUser,$dbPasswd);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) { die('Erreur BDD'); }
-
-$missionId = (int)($_GET['mission'] ?? $_POST['mission_id'] ?? 0);
-$mission   = null;
-$msg       = '';
-$msgType   = '';
-
-if ($missionId) {
-    $mission = $pdo->prepare('SELECT * FROM missions WHERE id=:id AND actif=1');
-    $mission->execute([':id' => $missionId]);
-    $mission = $mission->fetch();
-}
+$pdo = getDB();
 
 // Vérifier si déjà soumis
 $dejaSubmis = false;

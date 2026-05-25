@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/config.php';
 $title = 'Tableau de bord';
 include('login.php');
 requireRole('etudiant');

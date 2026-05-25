@@ -1,25 +1,11 @@
 <?php
+require_once __DIR__.'/config.php';
 // ============================================================
 //  LevelUp – register.php  (style Duolingo)
 // ============================================================
 session_start();
 
-$dbHost   = 'localhost';
-$dbName   = 'db_PLACE_NEVEUX';
-$dbUser   = '22505078';
-$dbPasswd = '126620';
-
-try {
-    $pdo = new PDO('mysql:host='.$dbHost.';dbname='.$dbName.';charset=utf8mb4', $dbUser, $dbPasswd);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die('<p style="color:red;text-align:center;">Erreur BDD : '.htmlspecialchars($e->getMessage()).'</p>');
-}
-
-if (isset($_SESSION['auth']) && $_SESSION['auth'] === 'ok') {
-    header('Location: index-etudiants.php'); exit();
-}
+$pdo = getDB();
 
 $error = ''; $success = false; $loginFinal = ''; $email = '';
 

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/config.php';
 $title = 'Classement';
 include('login.php');
 $role = $_SESSION['role'] ?? 'etudiant';

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/config.php';
 // ============================================================
 //  LevelUp – profile-prof.php
 //  Page profil dédiée aux enseignants / admins
@@ -14,27 +15,7 @@ if (!in_array($_SESSION['role'] ?? '', ['enseignant','admin'])) {
 }
 
 // Connexion BDD (nécessaire pour l'upload avant le HTML)
-$dbHost   = 'localhost';
-$dbName   = 'db_PLACE_NEVEUX';
-$dbUser   = '22505078';
-$dbPasswd = '126620';
-try {
-    $pdo = new PDO('mysql:host='.$dbHost.';dbname='.$dbName.';charset=utf8mb4', $dbUser, $dbPasswd);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die('Erreur BDD : '.htmlspecialchars($e->getMessage()));
-}
-
-// ---- Upload avatar (traité AVANT le HTML) ----
-$uploadMsg = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['avatar'])) {
-    $file  = $_FILES['avatar'];
-    $ext   = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-    $allowed = ['jpg','jpeg','png','gif','webp'];
-    if (!in_array($ext, $allowed)) {
-        $uploadMsg = 'error:Format non autorisé (jpg, png, gif, webp uniquement).';
-    } elseif ($file['size'] > 2 * 1024 * 1024) {
+$pdo = getDB(); elseif ($file['size'] > 2 * 1024 * 1024) {
         $uploadMsg = 'error:Fichier trop lourd (max 2 Mo).';
     } else {
         $dir      = 'uploads/avatars/';

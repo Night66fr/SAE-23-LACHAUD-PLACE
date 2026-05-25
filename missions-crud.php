@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/config.php';
 // ============================================================
 //  LevelUp – missions-crud.php  (prof uniquement)
 // ============================================================
@@ -10,40 +11,7 @@ if (!in_array($_SESSION['role'] ?? '', ['enseignant','admin'])) {
     header('Location: index-etudiants.php'); exit();
 }
 
-$dbHost='localhost'; $dbName='db_PLACE_NEVEUX'; $dbUser='22505078'; $dbPasswd='126620';
-try {
-    $pdo = new PDO('mysql:host='.$dbHost.';dbname='.$dbName.';charset=utf8mb4',$dbUser,$dbPasswd);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) { die('Erreur BDD'); }
-
-// ---- Barème XP automatique selon difficulté ----
-// Le prof peut ajuster manuellement dans une fourchette
-$bareme = [
-    'facile'    => ['min'=>20,  'defaut'=>40,  'max'=>60,  'label'=>'Facile'],
-    'moyen'     => ['min'=>60,  'defaut'=>80,  'max'=>120, 'label'=>'Moyen'],
-    'difficile' => ['min'=>120, 'defaut'=>160, 'max'=>200, 'label'=>'Difficile'],
-];
-
-$msg = ''; $msgType = '';
-$action = $_GET['action'] ?? 'liste';
-$editId = (int)($_GET['id'] ?? 0);
-$missionEdit = null;
-
-// ---- TRAITEMENT POST ----
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $postAction = $_POST['action'] ?? '';
-
-    // Calcul XP : base selon difficulté + bonus catégorie
-    $diff     = $_POST['difficulte'] ?? 'moyen';
-    $cat      = $_POST['categorie']  ?? 'reseau';
-    $xpManuel = (int)($_POST['xp']   ?? 0);
-    $b        = $bareme[$diff] ?? $bareme['moyen'];
-
-    // Clamp dans la fourchette
-    if ($xpManuel > 0) {
-        $xp = max($b['min'], min($b['max'], $xpManuel));
-    } else {
+$pdo = getDB(); else {
         $xp = $b['defaut'];
     }
 

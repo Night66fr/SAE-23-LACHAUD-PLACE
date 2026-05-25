@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/config.php';
 session_start();
 if (!isset($_SESSION['auth']) || $_SESSION['auth'] !== 'ok') {
     header('Location: login-page.php'); exit();
@@ -6,9 +7,7 @@ if (!isset($_SESSION['auth']) || $_SESSION['auth'] !== 'ok') {
 if (!in_array($_SESSION['role']??'', ['enseignant','admin'])) {
     header('Location: index-etudiants.php'); exit();
 }
-$dbHost='localhost';$dbName='db_PLACE_NEVEUX';$dbUser='22505078';$dbPasswd='126620';
-$pdo = new PDO('mysql:host='.$dbHost.';dbname='.$dbName.';charset=utf8mb4',$dbUser,$dbPasswd);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo = getDB();
 
 if ($_SERVER['REQUEST_METHOD']==='POST') {
     $bugId = (int)($_POST['bug_id'] ?? 0);

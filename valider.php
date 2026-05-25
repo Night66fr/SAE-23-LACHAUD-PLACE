@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/config.php';
 // ============================================================
 //  LevelUp – valider.php  (prof uniquement)
 // ============================================================
@@ -6,37 +7,7 @@ session_start();
 if (!isset($_SESSION['auth']) || $_SESSION['auth'] !== 'ok') { header('Location: login-page.php'); exit(); }
 if (!in_array($_SESSION['role']??'', ['enseignant','admin'])) { header('Location: index-etudiants.php'); exit(); }
 
-$dbHost='localhost'; $dbName='db_PLACE_NEVEUX'; $dbUser='22505078'; $dbPasswd='126620';
-try {
-    $pdo = new PDO('mysql:host='.$dbHost.';dbname='.$dbName.';charset=utf8mb4',$dbUser,$dbPasswd);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) { die('Erreur BDD'); }
-
-// Traitement POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $soumId  = (int)($_POST['soum_id'] ?? 0);
-    $action  = $_POST['action'] ?? '';
-    $comment = trim($_POST['commentaire'] ?? '');
-
-    if ($soumId && in_array($action, ['valider','refuser'])) {
-        $soum = $pdo->prepare('SELECT s.*, m.xp FROM soumissions s JOIN missions m ON s.mission_id=m.id WHERE s.id=:id');
-        $soum->execute([':id' => $soumId]);
-        $s = $soum->fetch();
-
-        if ($s) {
-            if ($action === 'valider') {
-                $pdo->prepare('UPDATE soumissions SET statut="valide", commentaire=:c, xp_attribue=:xp, valide_par=:vp, valide_le=NOW() WHERE id=:id')
-                    ->execute([':c'=>$comment, ':xp'=>$s['xp'], ':vp'=>$_SESSION['user_id'], ':id'=>$soumId]);
-                // Ajouter XP à l'étudiant
-                $pdo->prepare('UPDATE users SET xp = xp + :xp WHERE id=:id')
-                    ->execute([':xp'=>$s['xp'], ':id'=>$s['user_id']]);
-                // Recalculer niveau
-                $u = $pdo->prepare('SELECT xp FROM users WHERE id=:id'); $u->execute([':id'=>$s['user_id']]);
-                $newXp = $u->fetch()['xp'];
-                $newNiveau = min(20, (int)floor($newXp/100) + 1);
-                $pdo->prepare('UPDATE users SET niveau=:n WHERE id=:id')->execute([':n'=>$newNiveau,':id'=>$s['user_id']]);
-            } else {
+$pdo = getDB(); else {
                 $pdo->prepare('UPDATE soumissions SET statut="refuse", refuse_raison=:c, valide_par=:vp, valide_le=NOW() WHERE id=:id')
                     ->execute([':c'=>$comment, ':vp'=>$_SESSION['user_id'], ':id'=>$soumId]);
             }

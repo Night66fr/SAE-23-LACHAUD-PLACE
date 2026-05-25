@@ -1,28 +1,12 @@
 <?php
+require_once __DIR__.'/config.php';
 // ============================================================
 //  LevelUp – login-page.php
 //  Connexion avec redirection par rôle
 // ============================================================
 session_start();
 
-$dbHost   = 'localhost';
-$dbName   = 'db_PLACE_NEVEUX';
-$dbUser   = '22505078';
-$dbPasswd = '126620';
-
-try {
-    $pdo = new PDO('mysql:host='.$dbHost.';dbname='.$dbName.';charset=utf8mb4', $dbUser, $dbPasswd);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die('<p style="color:red;text-align:center;">Erreur BDD : '.htmlspecialchars($e->getMessage()).'</p>');
-}
-
-// Déjà connecté → redirection selon rôle
-if (isset($_SESSION['auth']) && $_SESSION['auth'] === 'ok') {
-    $r = in_array($_SESSION['role'] ?? '', ['enseignant','admin']) ? 'index-prof.php' : 'index-etudiants.php';
-    header('Location: '.$r); exit();
-}
+$pdo = getDB();
 
 
 $error   = '';

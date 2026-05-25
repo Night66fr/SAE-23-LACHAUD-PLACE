@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/config.php';
 // ============================================================
 //  LevelUp – login.php
 //  À inclure EN PREMIER dans chaque page protégée.
@@ -7,26 +8,7 @@
 if (session_status() === PHP_SESSION_NONE) if (session_status() === PHP_SESSION_NONE) session_start();
 
 // ---- PDO : connexion BDD ----
-$dbHost   = 'localhost';
-$dbName   = 'db_PLACE_NEVEUX';
-$dbUser   = '22505078';
-$dbPasswd = '126620';
-
-try {
-    $pdo = new PDO(
-        'mysql:host='.$dbHost.';dbname='.$dbName.';charset=utf8mb4',
-        $dbUser, $dbPasswd
-    );
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die('<p style="color:red;text-align:center;">Erreur BDD : '.htmlspecialchars($e->getMessage()).'</p>');
-}
-
-// ---- Helpers ----
-function cbGetValue($array, $name, $default = '') {
-    return isset($array[$name]) ? $array[$name] : $default;
-}
+$pdo = getDB();
 function cbPrintf() {
     $args = func_get_args();
     if (!$args) $args = [''];

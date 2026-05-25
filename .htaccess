@@ -1,5 +1,3 @@
-# À placer dans le dossier SAE 23/.htaccess
-# Augmente la limite d'upload PHP pour ce dossier
 php_value upload_max_filesize 100M
 php_value post_max_size 105M
 php_value max_execution_time 300

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/config.php';
 $title = 'Dashboard Professeur';
 include('login.php');
 requireRole(['enseignant','admin']);
